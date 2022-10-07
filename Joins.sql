@@ -48,14 +48,13 @@ WHERE categories.Name = 'Appliances' OR categories.Name = "Games";
  WHERE Name = "Eagles: Hotel California";
 */
 /* joins: find Product name, reviewer name, rating, and comment on the Visio TV. (only return for the lowest rating!) */
+/*
 SELECT products.Name as Product, Reviewer, Rating, Comment
 FROM products
 INNER JOIN reviews
 ON products.ProductID = reviews.ProductID
-WHERE product.Name LIKE '%Visio%TV%'
-ORDER BY Rating ASC
-LIMIT 1;
-
+WHERE productS.Name LIKE '%Visio%TV%' AND Rating = (SELECT MIN(Rating) FROM reviews WHERE ProductID = products.ProductID);
+*/
 
 
 -- ------------------------------------------ Extra - May be difficult
@@ -63,4 +62,17 @@ LIMIT 1;
 /* Your goal is to write a query that serves as an employee sales report.
 
 This query should return the employeeID, the employee's first and last name, the name of each product, how many of that product they sold */
-
+SELECT 
+	employees.EmployeeID, 
+    employees.FirstName AS FirstName, 
+    employees.LastName AS LastName, 
+    products.Name AS Product,
+    SUM(sales.Quantity) AS Total_Units_Sold,
+    SUM(sales.Quantity * sales.PricePerUnit) AS Gross_Revenue
+FROM sales
+INNER JOIN employees
+ON sales.EmployeeID = employees.EmployeeID
+INNER JOIN products
+ON sales.ProductID = products.ProductID
+GROUP BY employees.EmployeeID, sales.ProductID
+ORDER BY LastName;
